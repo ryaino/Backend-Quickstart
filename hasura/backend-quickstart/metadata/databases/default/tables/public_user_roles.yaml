@@ -1,0 +1,12 @@
+table:
+  name: user_roles
+  schema: public
+is_enum: true
+array_relationships:
+  - name: assigned_user_roles
+    using:
+      foreign_key_constraint_on:
+        column: user_role_name
+        table:
+          name: assigned_user_roles
+          schema: public

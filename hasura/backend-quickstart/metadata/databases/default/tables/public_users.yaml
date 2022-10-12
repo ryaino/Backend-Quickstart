@@ -1,0 +1,25 @@
+table:
+  name: users
+  schema: public
+array_relationships:
+  - name: assigned_user_roles
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: assigned_user_roles
+          schema: public
+select_permissions:
+  - role: ROLE_USER
+    permission:
+      columns:
+        - email
+        - password
+        - id
+      filter: {}
+  - role: anonymous
+    permission:
+      columns:
+        - email
+        - id
+      filter: {}
