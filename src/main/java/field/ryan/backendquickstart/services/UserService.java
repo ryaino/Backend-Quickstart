@@ -49,16 +49,23 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User getUserByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("");
         }
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = getUserByEmail(email);
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         flattenUserRoles(user.getRoles()).forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role));
         });
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
+
+
 }

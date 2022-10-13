@@ -3,7 +3,9 @@ package field.ryan.backendquickstart.config;
 import field.ryan.backendquickstart.filters.CustomAuthenticationFilter;
 import field.ryan.backendquickstart.filters.CustomAuthorizationFilter;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,23 +14,24 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationConfiguration configuration;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Autowired
     void configure(AuthenticationManagerBuilder builder) throws Exception {
@@ -43,13 +46,18 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/test").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();
-        http.addFilter(new CustomAuthenticationFilter(authenticationManager()));
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilter(new CustomAuthenticationFilter(authenticationManager(), jwtSecret));
+        http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
     AuthenticationManager authenticationManager() throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    CustomAuthorizationFilter customAuthorizationFilter() {
+        return new CustomAuthorizationFilter(jwtSecret);
     }
 }

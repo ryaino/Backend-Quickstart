@@ -26,10 +26,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @AllArgsConstructor
-@NoArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Override
