@@ -3,7 +3,10 @@ package field.ryan.backendquickstart.filters;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import field.ryan.backendquickstart.services.UserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,18 +20,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final String jwtSecret;
+
+    private final UserService userService;
+
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -42,13 +47,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
-        String access_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .withClaim("x-hasura-allowed-roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .withClaim("x-hasura-default-role", "ROLE_USER")
-                .sign(algorithm);
+
+        String access_token = createJwtAccessToken(user, algorithm, userService.getUserByEmail(user.getUsername()).getId() , request);
 
         String refresh_token = JWT.create()
                 .withSubject(user.getUsername())
@@ -61,5 +61,18 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         tokens.put("refresh_token",refresh_token);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+    }
+
+    private String createJwtAccessToken(User user, Algorithm algorithm, UUID userId, HttpServletRequest request) {
+        List<String> roles = new ArrayList<>(user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+        roles.add("anonymous");
+        return JWT.create()
+                .withSubject(user.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withIssuer(request.getRequestURL().toString())
+                .withClaim("x-hasura-allowed-roles",roles)
+                .withClaim("x-hasura-default-role", "ROLE_USER")
+                .withClaim("x-hasura-user-id", userId.toString())
+                .sign(algorithm);
     }
 }
