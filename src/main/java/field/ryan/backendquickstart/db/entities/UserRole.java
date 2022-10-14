@@ -20,7 +20,7 @@ public class UserRole {
     @Id
     private String name;
 
-    @OneToMany(mappedBy = "userRole")
+    @OneToMany(mappedBy = "userRoleName")
     List<AssignedUserRole> assignedUserRoles = new ArrayList<>();
 
 }

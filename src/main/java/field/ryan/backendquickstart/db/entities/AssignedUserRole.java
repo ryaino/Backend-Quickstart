@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "assigned_user_roles")
@@ -17,13 +18,9 @@ import javax.persistence.*;
 public class AssignedUserRole {
 
     @Id
-    @ManyToOne
-    private User user;
-
+    private UUID userId;
     @Id
-    @ManyToOne
-    private UserRole userRole;
-
-
+    private String userRoleName;
+    
 }
 

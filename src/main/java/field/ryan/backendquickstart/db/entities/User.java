@@ -20,7 +20,7 @@ public class User {
     private UUID id;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<AssignedUserRole> roles = new HashSet<>();
 
 }
