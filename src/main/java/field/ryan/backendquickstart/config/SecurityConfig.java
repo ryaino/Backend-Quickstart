@@ -3,7 +3,6 @@ package field.ryan.backendquickstart.config;
 import field.ryan.backendquickstart.filters.CustomAuthenticationFilter;
 import field.ryan.backendquickstart.filters.CustomAuthorizationFilter;
 import field.ryan.backendquickstart.services.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
