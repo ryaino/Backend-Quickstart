@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("");
         }
-        return userRepository.findByEmail(email);
+        return user;
     }
 
     @Override
@@ -80,7 +80,12 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
 
-
-    public void createUser(String email, String password) {
+    public org.springframework.security.core.userdetails.User convertToSecurityUser(User user) {
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        flattenUserRoles(user.getRoles()).forEach(role -> {
+            authorities.add(new SimpleGrantedAuthority(role));
+        });
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
+
 }
