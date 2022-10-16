@@ -2,6 +2,7 @@ package field.ryan.backendquickstart.config;
 
 import field.ryan.backendquickstart.filters.CustomAuthenticationFilter;
 import field.ryan.backendquickstart.filters.CustomAuthorizationFilter;
+import field.ryan.backendquickstart.services.JwtService;
 import field.ryan.backendquickstart.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationConfiguration configuration;
-
+    private final JwtService jwtService;
     private final UserService userService;
 
     @Value("${jwt.secret}")
@@ -49,7 +50,7 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/test").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().anyRequest().authenticated();
-        http.addFilter(new CustomAuthenticationFilter(authenticationManager(), jwtSecret, userService));
+        http.addFilter(new CustomAuthenticationFilter(authenticationManager(), userService, jwtService));
         http.addFilterBefore(customAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
