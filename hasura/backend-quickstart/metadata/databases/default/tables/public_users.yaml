@@ -9,17 +9,3 @@ array_relationships:
         table:
           name: assigned_user_roles
           schema: public
-select_permissions:
-  - role: ROLE_USER
-    permission:
-      columns:
-        - email
-        - password
-        - id
-      filter: {}
-  - role: anonymous
-    permission:
-      columns:
-        - email
-        - id
-      filter: {}
