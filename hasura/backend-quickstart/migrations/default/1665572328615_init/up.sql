@@ -9,7 +9,7 @@ CREATE TABLE public.user_roles (
     name text NOT NULL
 );
 INSERT INTO public.user_roles (name) VALUES
-    ('ROLE_USER')
+    ('ROLE_USER');
 CREATE TABLE public.users (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
     email text NOT NULL,
