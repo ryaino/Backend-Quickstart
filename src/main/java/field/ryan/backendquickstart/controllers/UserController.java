@@ -10,14 +10,12 @@ import field.ryan.backendquickstart.db.entities.User;
 import field.ryan.backendquickstart.dto.RegisterUserInput;
 import field.ryan.backendquickstart.services.JwtService;
 import field.ryan.backendquickstart.services.UserService;
-import lombok.AllArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
