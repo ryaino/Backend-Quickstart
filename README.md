@@ -36,7 +36,6 @@ Here's an example .env file:
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=password
 export POSTGRES_DB=hasura_db
-export DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/${POSTGRES_DB}
 export JWT_SECRET=qwertyuioplkjhgfdsazxcvbnmqwertyuioplkjhgfdsazxcvbnm
 export HASURA_ADMIN_SECRET=myadminsecretkey
 ```
