@@ -41,11 +41,6 @@ public class UserController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @GetMapping("/api")
-    public List<UserDto> getAllUsers() {
-        return userService.findAll().stream().map(userService::mapToDto).collect(Collectors.toList());
-    }
-
     @PostMapping("/register")
     public void registerUser(@RequestBody RegisterUserInput input) {
         User user = modelMapper.map(input, User.class);
