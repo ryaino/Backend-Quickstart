@@ -2,6 +2,7 @@
 # Backend Quickstart
 
 An all-in-one backend setup ready to go straight out of the box with Hasura, Postgres and Spring Boot.
+For a video guide on setup and usage look here: https://youtu.be/VDN5PA-2efE
 
 ## Features
 - Auto Generated Graphql on your data
