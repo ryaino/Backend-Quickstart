@@ -1,8 +1,9 @@
 package field.ryan.backendquickstart.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import field.ryan.backendquickstart.db.dtos.UserDto;
 import field.ryan.backendquickstart.db.entities.User;
+import field.ryan.backendquickstart.dto.ActionPayload;
+import field.ryan.backendquickstart.dto.RefreshTokenOutput;
 import field.ryan.backendquickstart.dto.RegisterUserInput;
 import field.ryan.backendquickstart.services.JwtService;
 import field.ryan.backendquickstart.services.UserService;
@@ -21,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -42,25 +42,27 @@ public class UserController {
     private String jwtSecret;
 
     @PostMapping("/register")
-    public void registerUser(@RequestBody RegisterUserInput input) {
-        User user = modelMapper.map(input, User.class);
+    public Boolean registerUser(@RequestBody ActionPayload<RegisterUserInput> body) {
+        User user = modelMapper.map(body.getInput(), User.class);
         userService.saveUser(user);
+        return true;
     }
 
-    @GetMapping("/refresh")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @PostMapping("/refresh")
+    public RefreshTokenOutput refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
+        RefreshTokenOutput output = new RefreshTokenOutput();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 Map<String, String> tokens = jwtService.refreshAccessToken(request);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+                output.setAccess_token(tokens.get("access_token"));
             } catch (Exception e) {
                 response.sendError(HttpStatus.BAD_REQUEST.value(), "Unable to refresh token");
             }
         } else {
             throw new RuntimeException("Refresh token is missing");
         }
+        return output;
     }
 
 }

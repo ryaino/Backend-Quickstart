@@ -1,6 +1,31 @@
-actions: []
+actions:
+  - name: loginUser
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8080/api/login
+    permissions:
+      - role: anonymous
+  - name: refreshUser
+    definition:
+      kind: ""
+      handler: http://host.docker.internal:8080/api/user/refresh
+      forward_client_headers: true
+    permissions:
+      - role: ROLE_USER
+      - role: anonymous
+  - name: registerUser
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8080/api/user/register
+    permissions:
+      - role: anonymous
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: registerUserInput
+    - name: LoginDetails
+  objects:
+    - name: RefreshTokenOutput
+    - name: SampleOutput
+    - name: LoginOutput
   scalars: []

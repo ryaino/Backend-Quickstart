@@ -1,0 +1,40 @@
+type Mutation {
+  loginUser(
+    loginDetails: LoginDetails!
+  ): LoginOutput
+}
+
+type Query {
+  refreshUser: RefreshTokenOutput
+}
+
+type Mutation {
+  registerUser(
+    email: String!
+    password: String!
+  ): Boolean
+}
+
+input registerUserInput {
+  email: String!
+  password: String!
+}
+
+input LoginDetails {
+  email: String!
+  password: String!
+}
+
+type RefreshTokenOutput {
+  access_token: String!
+}
+
+type SampleOutput {
+  accessToken: String!
+}
+
+type LoginOutput {
+  access_token: String!
+  refresh_token: String!
+}
+

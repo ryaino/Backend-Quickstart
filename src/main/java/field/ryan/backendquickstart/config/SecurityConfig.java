@@ -19,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
@@ -46,6 +49,13 @@ public class SecurityConfig {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager(), userService, jwtService);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("http://localhost:8180/v1/graphql"));
+            cors.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        });
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/login").permitAll();
         http.authorizeRequests().antMatchers("/api/user/**").permitAll();

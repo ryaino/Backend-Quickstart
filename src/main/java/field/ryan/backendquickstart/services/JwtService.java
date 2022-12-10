@@ -44,7 +44,8 @@ public class JwtService {
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
-                .withClaim("roles", roles)
+                .withClaim("x-hasura-allowed-roles", roles)
+                .withClaim("x-hasura-default-role", "ROLE_USER")
                 .sign(getAlgorithm());
     }
 
